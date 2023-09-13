@@ -1,6 +1,7 @@
 To run this, run:
-
+```console
 terraform-compliance -p "tfplan.json" -f git:https://github.com/cyber-scot/utilities.git//terraform/helpers/terraform-compliance-test//?ref=main
+```
 
 # Resource Name Construction
 
