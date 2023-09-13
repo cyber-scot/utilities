@@ -17,5 +17,5 @@ Scenario Outline: Ensure that specific tags are defined
     | tags        | value                                      |
     | CostCentre  | .+                                         |
     | Environment | ^(poc\|mvp\|dev\|tst\|stg\|uat\|ppd\|prd)$ |
-    | Contact     | ^[^@]+@libredevops\.org$                   |
+    | Contact     | ^[^@]+@cyber\.scot$                   |
     | ManagedBy   | ^(Terraform\|Pulumi\|Automation\|Manual)$  |

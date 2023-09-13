@@ -1,24 +1,49 @@
 #!/usr/bin/env bash
-# This script will sort your terraform variables in alphabetical order.
-# We took the main concept of this script from the author whom is still credited in the heredoc.
+
+#######################################################
+# tf-sort.sh Usage:
 #
-# RUN AT YOUR OWN PERIL
+# This script sorts Terraform variables in alphabetical order.
 #
-# Master copy at https://github.com/cyber-scot/utilities/blob/main/terraform/helpers/tf-sort.sh
+# By default, the script will perform the sorting.
+# You can use it like this:
+#   ./tf-sort.sh input.tf output.tf
 #
-# This script fis set to take arguments, so you can run it like so from anywhere with bash, curl or wget and awk:
+# Or with `bash`, `curl`, or `wget` and `awk`:
+#   curl https://raw.githubusercontent.com/cyber-scot/utilities/main/terraform/helpers/tf-sort.sh | bash -s -- input.tf output.tf
+#   wget -O - curl https://raw.githubusercontent.com/cyber-scot/utilities/main/terraform/helpers/tf-sort.sh | bash -s -- input.tf output.tf
 #
-# curl https://raw.githubusercontent.com/libre-devops/utils/dev/scripts/terraform/tf-sort.sh | bash -s -- input.tf sorted-input.tf
+# Options:
+#   --append : Appends this script execution command to the user's .bashrc.
 #
-# wget -O - https://raw.githubusercontent.com/libre-devops/utils/dev/scripts/terraform/tf-sort.sh | bash -s -- input.tf input.tf
+# Dependencies:
+#   - GNUAWK
 #
-# You must use GNUAWK for this.
+# Original script credits: yermulnik@gmail.com, 2021-2022
+# Master copy: https://github.com/cyber-scot/utilities/blob/main/terraform/helpers/tf-sort.sh
+#######################################################
+
+# Append script execution to .bashrc
+append_to_bashrc() {
+    echo "Appending script execution command to .bashrc"
+    echo "" >> ~/.bashrc
+    echo "# Execute tf-sort.sh for Terraform sorting tasks" >> ~/.bashrc
+    echo "${PWD}/tf-sort.sh" >> ~/.bashrc
+}
+
+# If --append flag is provided, add script execution to .bashrc and exit
+if [[ $1 == "--append" ]]; then
+    append_to_bashrc
+    exit 0
+fi
+
 set -euo pipefail
 
 tf_variables_file="${1:-variables.tf}"
 sorted_tf_variables_file="${2:-outputs.tf}"
 
-cat <<- 'EOF' > sort-tf.awk
+# Define and write the sorting logic to sort-tf.awk
+cat <<-'EOF' >sort-tf.awk
 #!/usr/bin/env -S awk -f
 # https://gist.github.com/yermulnik/7e0cf991962680d406692e1db1b551e6
 # Tested with GNU Awk 5.0.1, API: 2.0 (GNU MPFR 4.0.2, GNU MP 6.2.0)
@@ -87,6 +112,6 @@ cat <<- 'EOF' > sort-tf.awk
 }
 EOF
 
-# shellcheck disable=SC2002
-cat "${tf_variables_file}" | awk -f sort-tf.awk | tee ${sorted_tf_variables_file} && \
-rm -rf sort-tf.awk
+# Execute sorting and clean up
+cat "${tf_variables_file}" | awk -f sort-tf.awk | tee ${sorted_tf_variables_file} &&
+  rm -rf sort-tf.awk
