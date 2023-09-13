@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-#######################################################
+########################################################
 # tf-run.sh Usage:
 #
 # By default, this script runs Terraform related checks.
 #
 # Options:
 #   --append : Appends this script execution command to the user's .bashrc.
-#######################################################
+########################################################
 
 # Append script execution to .bashrc
 append_to_bashrc() {

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#######################################################
+########################################################
 # tf-sort.sh Usage:
 #
 # This script sorts Terraform variables in alphabetical order.
@@ -21,7 +21,7 @@
 #
 # Original script credits: yermulnik@gmail.com, 2021-2022
 # Master copy: https://github.com/cyber-scot/utilities/blob/main/terraform/helpers/tf-sort.sh
-#######################################################
+########################################################
 
 # Append script execution to .bashrc
 append_to_bashrc() {
