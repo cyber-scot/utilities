@@ -12,6 +12,7 @@
 #
 # wget -O - https://raw.githubusercontent.com/libre-devops/utils/dev/scripts/terraform/tf-sort.sh | bash -s -- input.tf input.tf
 #
+# You must use GNUAWK for this.
 set -euo pipefail
 
 tf_variables_file="${1:-variables.tf}"
