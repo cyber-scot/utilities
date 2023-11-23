@@ -16,7 +16,7 @@ function stfi () {
 }
 
 function stfo () {
-    curl https://raw.githubusercontent.com/cyber-scot/utilities/main/terraform/helpers/sort_tf_outputs | python3
+    curl https://raw.githubusercontent.com/cyber-scot/utilities/main/terraform/helpers/sort_tf_outputs.py | python3
 }
 
 function tf-rel() {
