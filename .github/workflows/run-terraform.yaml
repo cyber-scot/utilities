@@ -1,0 +1,84 @@
+name: 'Run Terraform'
+
+# Allow run manually
+on:
+  workflow_dispatch:
+    inputs:
+      working_directory:
+        type: string
+        description: What working directory should be passed to the script
+        default: (Get-Location).Path
+      run_terraform_init:
+        type: boolean
+        description: 'Whether terraform init should be ran'
+        default: true
+      run_terraform_plan:
+        type: boolean
+        description: 'Whether terraform plan should be ran'
+        default: true
+      run_terraform_plan_destroy:
+        type: boolean
+        description: 'Whether terraform plan destroy should be ran'
+        default: false
+      run_terraform_apply:
+        type: boolean
+        description: 'Whether terraform apply should be ran'
+        default: false
+      run_terraform_destroy:
+        type: boolean
+        description: 'Whether terraform destroy should be ran'
+        default: false
+      enable_debug_mode:
+        type: boolean
+        description: 'Whether debug mode should be enable for within the script'
+        default: true
+      delete_plan_files:
+        type: boolean
+        description: 'Whether the tfplan files should be auto deleted'
+        default: true
+      terraform_version:
+        type: string
+        description: 'What version should tfenv attempt to use?'
+        default: latest
+      terraform_state_name:
+        type: string
+        description: 'Name of the Terraform state file'
+        default: 'cscot-dev.terraform.tfstate'
+
+jobs:
+  run-script:
+    name: 'Run Script'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        id: run-script
+        shell: pwsh
+        run: |
+          .\Run-Terraform.ps1 `
+            -WorkingDirectory ${{ inputs.working_directory }} `
+            -RunTerraformInit ${{ inputs.run_terraform_init }} `
+            -RunTerraformPlan ${{ inputs.run_terraform_plan }} `
+            -RunTerraformPlanDestroy ${{ inputs.run_terraform_plan_destroy }} `
+            -RunTerraformApply ${{ inputs.run_terraform_apply }} `
+            -RunTerraformDestroy ${{ inputs.run_terraform_destroy }} `
+            -DebugMode ${{ inputs.enable_debug_mode }} `
+            -DeletePlanFiles ${{ inputs.delete_plan_files }} `
+            -TerraformVersion ${{ inputs.terraform_version }} `
+            -BackendStorageSubscriptionId ${{ secrets.SpokeSubId }} `
+            -BackendStorageResourceGroupName ${{ secrets.SpokeSaRgName }} `
+            -BackendStorageAccountName ${{ secrets.SpokeSaName }} `
+            -BackendStorageAccountBlobContainerName ${{ secrets.SpokeSaBlobContainerName }} `
+            -TerraformStateName ${{ inputs.terraform_state_name }}
+        env:
+          ARM_CLIENT_ID: ${{ secrets.SpokeSvpClientId }}
+          ARM_CLIENT_SECRET: ${{ secrets.SpokeSvpClientSecret }}
+          ARM_SUBSCRIPTION_ID: ${{ secrets.SpokeSubId }}
+          ARM_TENANT_ID: ${{ secrets.SpokeTenantId }}
+          ARM_USE_AZUREAD: true

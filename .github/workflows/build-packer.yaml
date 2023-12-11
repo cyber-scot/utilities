@@ -1,0 +1,63 @@
+name: 'Run Packer'
+
+# Allow run manually
+on:
+  workflow_dispatch:
+    inputs:
+      working_directory:
+        type: string
+        description: What working directory should be passed to the script
+        default: "containers/ubuntu"
+      run_packer_init:
+        type: boolean
+        description: 'Run Packer init?'
+        default: true
+      run_packer_validate:
+        type: boolean
+        description: 'Run Packer validate?'
+        default: true
+      run_packer_build:
+        type: boolean
+        description: 'Run Packer build?'
+        default: true
+      enable_debug_mode:
+        type: boolean
+        description: 'Whether debug mode should be enable for within the script'
+        default: true
+      packer_version:
+        type: string
+        description: 'Packer version to attempt install'
+        default: latest
+      packer_file_name:
+        type: string
+        description: 'Packer file name?'
+        default: "packer.pkr.hcl"
+
+jobs:
+  run-script:
+    name: 'Run Script'
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        id: run-script
+        shell: pwsh
+        run: |
+          $workingDirectory = Join-Path -Path "${{ github.workspace }}" -ChildPath "${{ inputs.working_directory }}"
+          .\Run-Packer.ps1 `
+            -WorkingDirectory $workingDirectory `
+            -RunPackerInit ${{ inputs.run_packer_init }} `
+            -RunPackerValidate ${{ inputs.run_packer_validate }} `
+            -RunPackerBuild ${{ inputs.run_packer_build }} `
+            -DebugMode ${{ inputs.enable_debug_mode }} `
+            -PackerVersion ${{ inputs.packer_version }} `
+            -PackerFileName ${{ inputs.packer_file_name }} `
+        env:
+          PKR_VAR_registry_username: ${{ secrets.RegistryUsername }}
+          PKR_VAR_registry_password: ${{ secrets.RegistryPassword }}
