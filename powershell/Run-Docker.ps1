@@ -126,18 +126,9 @@ function Build-DockerImage {
 }
 
 function Push-DockerImage {
-    param (
-        [string]$ImageName,
-        [string]$Registry,
-        [string]$Username,
-        [string]$Password
-    )
-
     try {
-        Write-Host "Info: Logging into Docker registry $Registry" -ForegroundColor Green
-        $passwordSecure = ConvertTo-SecureString $Password -AsPlainText -Force
-        $credential = New-Object System.Management.Automation.PSCredential ($Username, $passwordSecure)
-        $credential.GetNetworkCredential().Password | docker login $Registry -u $Username --password-stdin
+        Write-Host "Info: Logging into Docker registry $RegistryUrl" -ForegroundColor Green
+        $RegistryPassword | docker login $RegistryUrl -u $RegistryUsername --password-stdin
 
         if ($LASTEXITCODE -eq 0) {
             Write-Host "Info: Pushing Docker image $ImageName to $Registry" -ForegroundColor Green
