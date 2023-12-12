@@ -57,7 +57,7 @@
 
 param (
     [string]$DockerFileName = "Dockerfile",
-    [string]$DockerImageName = "ubuntu-cicd-base:latest",
+    [string]$DockerImageName = "base-images/ubuntu-cicd-base:latest",
     [string]$RegistryUrl = "ghcr.io",
     [string]$RegistryUsername = "myusername",
     [string]$RegistryPassword = "mypassword",
