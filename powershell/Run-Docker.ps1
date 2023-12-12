@@ -93,7 +93,7 @@ function Check-DockerExists {
     }
 }
 
-$DockerImageName = "${RegistryUrl}/${RegistryUsername}/${ContainerName}"
+$DockerImageName = "${RegistryUrl}/${RegistryUsername}/${DockerImageName}"
 
 function Build-DockerImage {
     param (
