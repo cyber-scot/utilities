@@ -132,8 +132,8 @@ function Push-DockerImage {
         $RegistryPassword | docker login $RegistryUrl -u $RegistryUsername --password-stdin
 
         if ($LASTEXITCODE -eq 0) {
-            Write-Host "Info: Pushing Docker image $ImageName to $Registry" -ForegroundColor Green
-            docker push $ImageName | Out-Host
+            Write-Host "Info: Pushing Docker image $DockerImageName to $Registry" -ForegroundColor Green
+            docker push $DockerImageName | Out-Host
             if ($LASTEXITCODE -eq 0) {
                 Write-Host "Success: Docker image pushed successfully." -ForegroundColor Green
                 return $true
