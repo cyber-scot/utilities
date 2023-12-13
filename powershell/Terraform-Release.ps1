@@ -12,6 +12,7 @@ param(
 )
 
 $CurrentDirectory = (Get-Location).Path
+$ErrorOccurred = $false
 
 function Format-Terraform {
     try {
@@ -48,8 +49,6 @@ function Git-Release {
         exit 1
     }
 }
-
-$ErrorOccurred = $false
 
 function Read-TerraformFile {
     param (
