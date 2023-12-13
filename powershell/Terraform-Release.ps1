@@ -8,7 +8,8 @@ param(
     [bool]$SortInputs = $true,
     [bool]$SortOutputs = $true,
     [bool]$GitRelease = $true,
-    [bool]$FormatTerraform = $true
+    [bool]$FormatTerraform = $true,
+    [bool]$GenerateNewReadme = $true
 )
 
 $CurrentDirectory = (Get-Location).Path
@@ -127,6 +128,43 @@ function Sort-TerraformVariables {
     }
 }
 
+function Update-ReadmeWithTerraformDocs {
+
+    try {
+        $terraformDocsPath = Get-Command terraform-docs -ErrorAction Stop
+        Write-Host "Success: Terraform-docs found at: $($terraformDocsPath.Source)" -ForegroundColor Green
+        }
+    catch {
+        Write-Error "Error: Terraform-docs is not installed or not in PATH, Skipping README generation."
+    }
+
+
+    $buildFile = ""
+    if (Test-Path "./build.tf") {
+        $buildFile = "./build.tf"
+        Write-Host "Success: ${buildFile} found" -ForegroundColor Green
+    } elseif (Test-Path "./main.tf") {
+        $buildFile = "./main.tf"
+        Write-Host "Success: ${buildFile} found" -ForegroundColor Green
+    }
+
+    if ($buildFile -ne "") {
+        Set-Content "README.md" -Value '```hcl'
+        Get-Content $buildFile | Add-Content "README.md"
+        Add-Content "README.md" -Value '```'
+
+        try {
+            $terraformDocs = terraform-docs markdown .
+            $terraformDocs | Add-Content "README.md"
+        } catch {
+            Write-Error "Error: Failed to generate or append terraform-docs markdown. Make sure terraform-docs is installed and in PATH."
+        }
+    } else {
+        Write-Warning "Warning: Not a build directory, no build.tf or main.tf found"
+    }
+}
+
+
 if ($FormatTerraform) {
     Format-Terraform
 }
@@ -151,6 +189,10 @@ if ($SortOutputs) {
             Write-Host "Success: Sorted Terraform outputs written to $OutputsOutFile" -ForegroundColor Green
         }
     }
+}
+
+if ($GenerateNewReadme) {
+    Update-ReadmeWithTerraformDocs
 }
 
 if ($GitRelease) {
